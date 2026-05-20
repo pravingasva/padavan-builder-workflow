@@ -45,6 +45,10 @@ jobs:
     - name: Run custom pre-build script
       run: '[[ -f pre-build.sh ]] && . pre-build.sh || :'
 
+    - name: Patch Missing BusyBox CAN Macros
+      run: |
+        find . -name "iplink.c" -path "*/networking/libiproute/*" -exec sed -i '1s/^/#define CAN_CTRLMODE_FD 0x20\n#define CAN_CTRLMODE_PRESUME_ACK 0x40\n#define CAN_CTRLMODE_FD_NON_ISO 0x80\n#define IFLA_CAN_TERMINATION 11\n/' {} \;
+
     - name: Build firmware
       run: |
         cp build.config padavan-ng/trunk/.config
